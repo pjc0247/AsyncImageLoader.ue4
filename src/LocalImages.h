@@ -31,7 +31,7 @@ public:
 
 private:
     static bool LoadImageData(const FString &path,
-        const TArray<uint8> *raw, int &width, int &height);
+        const TArray<uint8> *&raw, int &width, int &height);
 
     static TArray<FColor> ConvertRawToFColorRaw(const TArray<uint8> &src);
     static TArray<FColor> ResizeImage(const TArray<FColor> &src,
