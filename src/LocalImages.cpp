@@ -33,13 +33,15 @@ void ULocalImages::LoadThumbnailsFromMyPictures(int offset, int count, FLoadThum
             absPath += "\\";
             absPath += filename;
 
-            const TArray<uint8> *raw = nullptr;
+            UE_LOG(LogTemp, Warning, TEXT("Load : %s"), *absPath);
+
+            TArray<uint8> raw;
             int width, height;
             if (LoadImageData(absPath, raw, width, height) == false)
                 continue;
 
             auto resized = ResizeImage(
-                ConvertRawToFColorRaw(*raw),
+                ConvertRawToFColorRaw(raw),
                 width, height, 128, 128);
             
             AsyncTask(ENamedThreads::GameThread, [callback, filename, absPath, resized]() {
@@ -63,11 +65,11 @@ void ULocalImages::LoadTexture2DAsync(const FString path, FLoadTexture2DDelegate
     }
 
     thread([path, callback]() {
-        const TArray<uint8> *raw = nullptr;
+        TArray<uint8> raw;
         int width, height;
 
         if (LoadImageData(path, raw, width, height)) {
-            auto rawConverted = ConvertRawToFColorRaw(*raw);
+            auto rawConverted = ConvertRawToFColorRaw(raw);
 
             AsyncTask(ENamedThreads::GameThread, [rawConverted, width, height, callback]() {
                 auto texture = CreateTextureFromRaw(rawConverted, width, height);
@@ -84,7 +86,7 @@ void ULocalImages::LoadTexture2DAsync(const FString path, FLoadTexture2DDelegate
 }
 
 bool ULocalImages::LoadImageData(const FString &path,
-    const TArray<uint8> *&raw, int &width, int &height) {
+    TArray<uint8> &raw, int &width, int &height) {
 
     auto &imageWrapper = FModuleManager::LoadModuleChecked<IImageWrapperModule>(TEXT("ImageWrapper"));
 
@@ -101,14 +103,16 @@ bool ULocalImages::LoadImageData(const FString &path,
     }
 
     auto wrapper = imageWrapper.CreateImageWrapper(format);
+    const TArray<uint8> *rawPtr = nullptr;
+
     wrapper->SetCompressed(fd.GetData(), fd.Num());
-    wrapper->GetRaw(ERGBFormat::BGRA, 8, raw);
-    if (raw == nullptr) {
+    wrapper->GetRaw(ERGBFormat::BGRA, 8, rawPtr);
+    if (rawPtr == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("Failed to decompress image file: %s"), *path);
         return false;
     }
-
     
+    raw.Insert(*rawPtr, 0);
     width = wrapper->GetWidth();
     height = wrapper->GetHeight();
 
@@ -152,12 +156,10 @@ UTexture2D *ULocalImages::CreateTextureFromRaw(const TArray<FColor> &src, int wi
             *dstPtr++ = srcPtr->B;
             *dstPtr++ = srcPtr->G;
             *dstPtr++ = srcPtr->R;
-            if (true)
-            {
+            if (true) {
                 *dstPtr++ = srcPtr->A;
             }
-            else
-            {
+            else {
                 *dstPtr++ = 0xFF;
             }
             srcPtr++;
