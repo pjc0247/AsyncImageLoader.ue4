@@ -84,7 +84,7 @@ void ULocalImages::LoadTexture2DAsync(const FString path, FLoadTexture2DDelegate
 }
 
 bool ULocalImages::LoadImageData(const FString &path,
-    const TArray<uint8> *raw, int &width, int &height) {
+    const TArray<uint8> *&raw, int &width, int &height) {
 
     auto &imageWrapper = FModuleManager::LoadModuleChecked<IImageWrapperModule>(TEXT("ImageWrapper"));
 
