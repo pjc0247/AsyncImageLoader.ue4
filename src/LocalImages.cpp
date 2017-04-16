@@ -95,7 +95,7 @@ bool ULocalImages::LoadImageData(const FString &path,
         UE_LOG(LogTemp, Error, TEXT("Failed to load file: %s"), *path);
         return false;
     }
-
+t
     auto format = imageWrapper.DetectImageFormat(fd.GetData(), fd.Num());
     if (format == EImageFormat::Invalid) {
         UE_LOG(LogTemp, Error, TEXT("Unrecognized image file format: %s"), *path);
@@ -105,7 +105,7 @@ bool ULocalImages::LoadImageData(const FString &path,
     auto wrapper = imageWrapper.CreateImageWrapper(format);
     const TArray<uint8> *rawPtr = nullptr;
 
-    wrapper->SetCompressed(fd.GetData(), fd.Num());
+d    wrapper->SetCompressed(fd.GetData(), fd.Num());
     wrapper->GetRaw(ERGBFormat::BGRA, 8, rawPtr);
     if (rawPtr == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("Failed to decompress image file: %s"), *path);
@@ -144,7 +144,7 @@ TArray<FColor> ULocalImages::ResizeImage(const TArray<FColor> &src,
     return dst;
 }
 UTexture2D *ULocalImages::CreateTextureFromRaw(const TArray<FColor> &src, int width, int height) {
-    auto texture = UTexture2D::CreateTransient(128, 128, PF_B8G8R8A8);
+    auto texture = UTexture2D::CreateTransient(width, height, PF_B8G8R8A8);
     auto mipData = static_cast<uint8*>(texture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE));
 
     uint8* dstPtr = nullptr;
