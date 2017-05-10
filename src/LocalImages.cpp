@@ -68,8 +68,7 @@ void ULocalImages::LoadTexture2DAsync(const FString path, FLoadTexture2DDelegate
         TArray<uint8> raw;
         int width, height;
 
-        if (LoadImageData(path, raw, width, height)) {
-            auto rawConverted = ConvertRawToFColorRaw(raw);
+        if (LoadImageData(path, raw, width, height)) {            auto rawConverted = ConvertRawToFColorRaw(raw);
 
             AsyncTask(ENamedThreads::GameThread, [rawConverted, width, height, callback]() {
                 auto texture = CreateTextureFromRaw(rawConverted, width, height);
@@ -95,7 +94,7 @@ bool ULocalImages::LoadImageData(const FString &path,
         UE_LOG(LogTemp, Error, TEXT("Failed to load file: %s"), *path);
         return false;
     }
-t
+
     auto format = imageWrapper.DetectImageFormat(fd.GetData(), fd.Num());
     if (format == EImageFormat::Invalid) {
         UE_LOG(LogTemp, Error, TEXT("Unrecognized image file format: %s"), *path);
@@ -105,7 +104,7 @@ t
     auto wrapper = imageWrapper.CreateImageWrapper(format);
     const TArray<uint8> *rawPtr = nullptr;
 
-d    wrapper->SetCompressed(fd.GetData(), fd.Num());
+    wrapper->SetCompressed(fd.GetData(), fd.Num());
     wrapper->GetRaw(ERGBFormat::BGRA, 8, rawPtr);
     if (rawPtr == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("Failed to decompress image file: %s"), *path);
