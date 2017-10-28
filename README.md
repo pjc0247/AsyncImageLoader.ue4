@@ -1,6 +1,7 @@
 AsyncImageLoader.ue4
 ====
-Asynchronous texture loader for Unreal4. Supports both C++ and Blueprint.
+Asynchronous texture loader for Unreal4.<br>
+Supports both C++ and Blueprint.
 
 Usage
 ----
